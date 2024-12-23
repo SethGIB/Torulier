@@ -33,7 +33,6 @@ private:
 
 	// Instance Setup
 	geom::BufferLayout	mPositionsBuffer;
-	gl::VboMeshRef		mPositionsSrc;
 	gl::VboMeshRef		mInstanceMesh;
 	gl::VboRef			mInstanceData;
 

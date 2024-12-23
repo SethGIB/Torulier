@@ -15,10 +15,6 @@ const vec2 RES_RADII(5.f,4.f);
 
 void ToroidalApp::setup()
 {
-	// Define members here, i.e.
-	//	Load any assets
-	//	Set up buffer objects
-	//	etc
 	setupCamera();
 	setupScene();
 }
@@ -36,17 +32,16 @@ void ToroidalApp::draw()
 	gl::clear( Color( 0, 0, 0 ) ); 
 	gl::setMatrices(mCamera);
 	
-
 	gl::enableDepthRead();
 
 	gl::setWireframeEnabled(true);
-	gl::lineWidth(2.0f);
-	mGlslMesh->uniform("uColor", ColorAf(0.2f, 0.7f, 1.0f, 1.0f));
+	gl::lineWidth(1.0f);
+	mGlslMesh->uniform("uColor", ColorAf(1.f, 0.75f, 0.f, 1.f));
 	mPreviewMeshBatch->draw();
-	
 	gl::setWireframeEnabled(false);
-	mGlslInstance->uniform("uColor", ColorAf(1.0f, 0.4f, 0.8f, 1.0f));
-
+	
+	mGlslInstance->uniform("uColor", ColorAf(0.5f, 0.5f, 0.5f, 1.0f));
+	mGlslInstance->uniform("uEyePos", mCamera.getEyePoint());
 	gl::pushMatrices();
 	gl::scale(vec3(RES_RADII.y));
 	mInstancedMeshesBatch->drawInstanced( (RES_AXIS+1)*(RES_HEIGHT+1) );
@@ -77,15 +72,14 @@ void ToroidalApp::setupScene()
 	auto instanceSrc = geom::Sphere().center(vec3()).radius(RES_S_RADIUS).subdivisions(RES_S_SUBD);
 	mGlslInstance = gl::GlslProg::create(loadAsset("shaders/v_instance.glsl"), loadAsset("shaders/f_instance.glsl"));
 
-	auto instanceVboMesh = gl::VboMesh::create(instanceSrc);
-	mPositionsSrc = mPreviewMeshBatch->getVboMesh();
+	gl::VboMeshRef instanceVboMesh = gl::VboMesh::create(instanceSrc);
+	gl::VboMeshRef positionsSrc = mPreviewMeshBatch->getVboMesh();
+	auto arrayVbos = positionsSrc->getVertexArrayVbos();
 
-	auto arrayVbos = mPositionsSrc->getVertexArrayVbos();
 	geom::BufferLayout bufferLayout;
-	auto instanceDataVbo = arrayVbos[0];
 	bufferLayout.append(geom::Attrib::CUSTOM_0, 3, 0, 0, 1);
 
-	instanceVboMesh->appendVbo(bufferLayout, instanceDataVbo);
+	instanceVboMesh->appendVbo(bufferLayout, arrayVbos[0]);
 	mInstancedMeshesBatch = gl::Batch::create(instanceVboMesh, mGlslInstance, { {geom::Attrib::CUSTOM_0, "vInstancePosition"} });
 }
 
