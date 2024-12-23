@@ -36,11 +36,11 @@ void ToroidalApp::draw()
 
 	gl::setWireframeEnabled(true);
 	gl::lineWidth(1.0f);
-	mGlslMesh->uniform("uColor", ColorAf(1.f, 0.75f, 0.f, 1.f));
+	mGlslMesh->uniform("uColor", ColorAf(1.f, 1.f, 1.f, 1.f));
 	mPreviewMeshBatch->draw();
 	gl::setWireframeEnabled(false);
 	
-	mGlslInstance->uniform("uColor", ColorAf(0.5f, 0.5f, 0.5f, 1.0f));
+	mGlslInstance->uniform("uColor", ColorAf(.25f, .25f, .25f, 1.0f));
 	mGlslInstance->uniform("uEyePos", mCamera.getEyePoint());
 	gl::pushMatrices();
 	gl::scale(vec3(RES_RADII.y));
@@ -50,13 +50,13 @@ void ToroidalApp::draw()
 
 void ToroidalApp::prepareSettings(App::Settings* settings)
 {
-	settings->setWindowSize(1280, 800);
+	settings->setWindowSize(900,900);
 }
 
 void ToroidalApp::setupCamera()
 {
 	mCamera.setPerspective(60.0f, getWindowAspectRatio(), 0.01f, 1000.0f);
-	mCamera.lookAt(vec3(0.0f, 1.0f, 10.0f), vec3(), vec3(0.0f, 1.0f, 0.0f));
+	mCamera.lookAt(vec3(0.0f, 2.5f, 15.0f), vec3(), vec3(0.0f, 1.0f, 0.0f));
 	mCameraControl = CameraUi(&mCamera, getWindow());
 }
 
@@ -73,14 +73,36 @@ void ToroidalApp::setupScene()
 	mGlslInstance = gl::GlslProg::create(loadAsset("shaders/v_instance.glsl"), loadAsset("shaders/f_instance.glsl"));
 
 	gl::VboMeshRef instanceVboMesh = gl::VboMesh::create(instanceSrc);
+
+	// Positions
 	gl::VboMeshRef positionsSrc = mPreviewMeshBatch->getVboMesh();
 	auto arrayVbos = positionsSrc->getVertexArrayVbos();
+	geom::BufferLayout layoutPosition;
+	layoutPosition.append(geom::Attrib::CUSTOM_0, 3, 0, 0, 1);
+	instanceVboMesh->appendVbo(layoutPosition, arrayVbos[0]);
 
-	geom::BufferLayout bufferLayout;
-	bufferLayout.append(geom::Attrib::CUSTOM_0, 3, 0, 0, 1);
+	// Colors
+	std::vector<vec3> colorsSrc;
+	setupColors(colorsSrc, previewMeshSrc.getNumVertices());
 
-	instanceVboMesh->appendVbo(bufferLayout, arrayVbos[0]);
-	mInstancedMeshesBatch = gl::Batch::create(instanceVboMesh, mGlslInstance, { {geom::Attrib::CUSTOM_0, "vInstancePosition"} });
+	gl::VboRef colorVbo = gl::Vbo::create(GL_ARRAY_BUFFER, colorsSrc.size() * sizeof(vec3), colorsSrc.data(), GL_DYNAMIC_DRAW);
+	geom::BufferLayout layoutColor;
+	layoutColor.append(geom::Attrib::CUSTOM_1, 3, 0, 0, 1);
+	instanceVboMesh->appendVbo(layoutColor, colorVbo);
+
+	mInstancedMeshesBatch = gl::Batch::create(instanceVboMesh, mGlslInstance, { {geom::Attrib::CUSTOM_0, "vInstancePosition"}, {geom::Attrib::CUSTOM_1, "vInstanceColor"} });
+}
+
+void ToroidalApp::setupColors(std::vector<vec3> &colorVector, size_t count)
+{
+	colorVector.clear();
+	for (size_t i = 0; i < count; i++)
+	{
+		if(i % 2==0)
+			colorVector.push_back(vec3(1.f,0.f,0.f));
+		else
+			colorVector.push_back(vec3(0.f, 1.f, 0.f));
+	}
 }
 
 CINDER_APP( ToroidalApp, RendererGl, *ToroidalApp::prepareSettings )

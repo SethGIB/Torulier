@@ -40,4 +40,5 @@ private:
 	// member functions
 	void setupCamera();
 	void setupScene();
+	void setupColors(std::vector<vec3>& colorVector, size_t count);
 };
