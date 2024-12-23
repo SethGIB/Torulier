@@ -5,8 +5,10 @@
 #include "cinder/gl/gl.h"
 #include "cinder/Camera.h"
 #include "cinder/CameraUi.h"
+#include "Osc.h"
 
 using namespace ci;
+using namespace cinder;
 using namespace ci::app;
 using namespace std;
 
@@ -20,6 +22,7 @@ public:
 	static void prepareSettings(App::Settings* settings);
 
 private:
+	/** Scene/GL **********************************************/
 	// View
 	CameraPersp			mCamera;
 	CameraUi			mCameraControl; //Mouse camera driver
@@ -36,6 +39,9 @@ private:
 	gl::VboMeshRef		mInstanceMesh;
 	gl::VboRef			mInstanceData;
 
+	/** UDP/Osc/Network ***************************************/
+	osc::UdpSocketRef	udpConnection;
+	std::shared_ptr<osc::ReceiverUdp>	udpClient;
 
 	// member functions
 	void setupCamera();
