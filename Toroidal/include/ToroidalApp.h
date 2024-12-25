@@ -14,6 +14,7 @@ using namespace std;
 
 class ToroidalApp : public App {
 public:
+	ToroidalApp();
 	void setup() override;
 	void mouseDown(MouseEvent event) override;
 	void update() override;
@@ -21,6 +22,8 @@ public:
 
 	static void prepareSettings(App::Settings* settings);
 
+	osc::UdpSocketRef	mUdpConnection;
+	osc::ReceiverUdp	mUdpClient;
 private:
 	/** Scene/GL **********************************************/
 	// View
@@ -40,8 +43,7 @@ private:
 	gl::VboRef			mInstanceData;
 
 	/** UDP/Osc/Network ***************************************/
-	osc::UdpSocketRef	udpConnection;
-	std::shared_ptr<osc::ReceiverUdp>	udpClient;
+
 
 	// member functions
 	void setupCamera();

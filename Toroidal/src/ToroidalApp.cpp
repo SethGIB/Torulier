@@ -13,6 +13,10 @@ const float RES_S_RADIUS = 0.06f;
 const int RES_S_SUBD = 16;
 const vec2 RES_RADII(5.f,4.f);
 
+ToroidalApp::ToroidalApp() : mUdpClient(10001)
+{
+}
+
 void ToroidalApp::setup()
 {
 	setupCamera();
@@ -105,4 +109,4 @@ void ToroidalApp::setupColors(std::vector<vec3> &colorVector, size_t count)
 	}
 }
 
-CINDER_APP( ToroidalApp, RendererGl, *ToroidalApp::prepareSettings )
+CINDER_APP( ToroidalApp, RendererGl, ToroidalApp::prepareSettings )
