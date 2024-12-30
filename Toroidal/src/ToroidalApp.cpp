@@ -7,11 +7,7 @@ using namespace ci;
 using namespace ci::app;
 using namespace std;
 
-const int RES_AXIS = 16;
-const int RES_HEIGHT = 8;
-const float RES_S_RADIUS = 0.06f;
-const int RES_S_SUBD = 16;
-const vec2 RES_RADII(5.f,4.f);
+
 
 ToroidalApp::ToroidalApp() : mUdpClient(10001)
 {
@@ -86,10 +82,8 @@ void ToroidalApp::setupScene()
 	instanceVboMesh->appendVbo(layoutPosition, arrayVbos[0]);
 
 	// Colors
-	std::vector<vec3> colorsSrc;
-	setupColors(colorsSrc, previewMeshSrc.getNumVertices());
-
-	gl::VboRef colorVbo = gl::Vbo::create(GL_ARRAY_BUFFER, colorsSrc.size() * sizeof(vec3), colorsSrc.data(), GL_DYNAMIC_DRAW);
+	setupColors(mColorSrc, (RES_AXIS+1)*(RES_HEIGHT+1));
+	gl::VboRef colorVbo = gl::Vbo::create(GL_ARRAY_BUFFER, mColorSrc.size() * sizeof(vec3), mColorSrc.data(), GL_DYNAMIC_DRAW);
 	geom::BufferLayout layoutColor;
 	layoutColor.append(geom::Attrib::CUSTOM_1, 3, 0, 0, 1);
 	instanceVboMesh->appendVbo(layoutColor, colorVbo);
@@ -102,11 +96,32 @@ void ToroidalApp::setupColors(std::vector<vec3> &colorVector, size_t count)
 	colorVector.clear();
 	for (size_t i = 0; i < count; i++)
 	{
-		if(i % 2==0)
-			colorVector.push_back(vec3(1.f,0.f,0.f));
+		if (i >= 0 && i <= 11)
+			colorVector.push_back(vec3(1.0f));
 		else
-			colorVector.push_back(vec3(0.f, 1.f, 0.f));
+		{
+			if (i % 2 == 0 && i > 11)
+				colorVector.push_back(vec3(1.f, 0.f, 0.f));
+			else
+				colorVector.push_back(vec3(0.f, 1.f, 0.f));
+		}
 	}
+}
+
+void ToroidalApp::patternChessboard()
+{
+}
+
+void ToroidalApp::patternRings()
+{
+}
+
+void ToroidalApp::patternCircles()
+{
+}
+
+void ToroidalApp::patternSparkle()
+{
 }
 
 CINDER_APP( ToroidalApp, RendererGl, ToroidalApp::prepareSettings )

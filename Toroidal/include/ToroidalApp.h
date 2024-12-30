@@ -12,6 +12,12 @@ using namespace cinder;
 using namespace ci::app;
 using namespace std;
 
+const int RES_AXIS = 16;
+const int RES_HEIGHT = 8;
+const float RES_S_RADIUS = 0.06f;
+const int RES_S_SUBD = 16;
+const vec2 RES_RADII(5.f, 4.f);
+
 class ToroidalApp : public App {
 public:
 	ToroidalApp();
@@ -24,6 +30,7 @@ public:
 
 	osc::UdpSocketRef	mUdpConnection;
 	osc::ReceiverUdp	mUdpClient;
+
 private:
 	/** Scene/GL **********************************************/
 	// View
@@ -41,6 +48,10 @@ private:
 	geom::BufferLayout	mPositionsBuffer;
 	gl::VboMeshRef		mInstanceMesh;
 	gl::VboRef			mInstanceData;
+	std::vector<vec3>	mColorSrc;
+
+	// Control Matrix
+	vec3 mCtrlMatrix[RES_AXIS+1][RES_HEIGHT+1];
 
 	/** UDP/Osc/Network ***************************************/
 
@@ -49,4 +60,10 @@ private:
 	void setupCamera();
 	void setupScene();
 	void setupColors(std::vector<vec3>& colorVector, size_t count);
+
+	// patterns
+	void patternChessboard();
+	void patternRings();
+	void patternCircles();
+	void patternSparkle();
 };
