@@ -15,7 +15,8 @@ const int RES_AXIS = 8;
 const int RES_HEIGHT = 8;
 const float RES_S_RADIUS = .175f;
 const int RES_S_SUBD = 16;
-const vec2 RES_RADII(6.f, 4.f);
+const vec2 RES_RADII(8.5f, 6.f);
+const float RES_DRAW_SCALE = 4.0f;
 
 class ToroidalApp : public App {
 public:

@@ -90,7 +90,8 @@ void ToroidalApp::getPositions(gl::VboRef sourceBuffer, std::vector<vec3>& posit
 	vec3* bufferMap = (vec3*)sourceBuffer->map(GL_READ_ONLY);
 	for (int i = 0; i < count; i++)
 	{
-		positionVector.push_back(vec3(bufferMap[i] * RES_RADII.y));
+		positionVector.push_back(vec3(bufferMap[i] * RES_DRAW_SCALE));
+		//positionVector.push_back(vec3(bufferMap[i]));
 	}
 	sourceBuffer->unmap();
 }
