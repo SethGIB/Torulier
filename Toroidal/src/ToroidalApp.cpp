@@ -7,12 +7,6 @@ using namespace ci;
 using namespace ci::app;
 using namespace std;
 
-
-
-ToroidalApp::ToroidalApp() : mUdpClient(10001)
-{
-}
-
 void ToroidalApp::setup()
 {
 	setupCamera();
@@ -36,21 +30,18 @@ void ToroidalApp::draw()
 
 	gl::setWireframeEnabled(true);
 	gl::lineWidth(1.0f);
-	mGlslMesh->uniform("uColor", ColorAf(1.f, 1.f, 1.f, 1.f));
+	mGlslMesh->uniform("uColor", ColorAf(.25f, .25f, .25f, 1.f));
 	mPreviewMeshBatch->draw();
 	gl::setWireframeEnabled(false);
 	
 	mGlslInstance->uniform("uColor", ColorAf(.25f, .25f, .25f, 1.0f));
 	mGlslInstance->uniform("uEyePos", mCamera.getEyePoint());
-	gl::pushMatrices();
-	gl::scale(vec3(RES_RADII.y));
 	mInstancedMeshesBatch->drawInstanced( (RES_AXIS+1)*(RES_HEIGHT+1) );
-	gl::popMatrices();
 }
 
 void ToroidalApp::prepareSettings(App::Settings* settings)
 {
-	settings->setWindowSize(900,900);
+	settings->setWindowSize(1280,800);
 }
 
 void ToroidalApp::setupCamera()
@@ -77,9 +68,12 @@ void ToroidalApp::setupScene()
 	// Positions
 	gl::VboMeshRef positionsSrc = mPreviewMeshBatch->getVboMesh();
 	auto arrayVbos = positionsSrc->getVertexArrayVbos();
+	std::vector<vec3> newPositions;
+	getPositions(arrayVbos[0], newPositions, (RES_AXIS + 1) * (RES_HEIGHT + 1));
+	gl::VboRef posVbo = gl::Vbo::create(GL_ARRAY_BUFFER, newPositions.size() * sizeof(vec3), newPositions.data(), GL_STATIC_DRAW);
 	geom::BufferLayout layoutPosition;
 	layoutPosition.append(geom::Attrib::CUSTOM_0, 3, 0, 0, 1);
-	instanceVboMesh->appendVbo(layoutPosition, arrayVbos[0]);
+	instanceVboMesh->appendVbo(layoutPosition, posVbo);
 
 	// Colors
 	setupColors(mColorSrc, (RES_AXIS+1)*(RES_HEIGHT+1));
@@ -91,20 +85,25 @@ void ToroidalApp::setupScene()
 	mInstancedMeshesBatch = gl::Batch::create(instanceVboMesh, mGlslInstance, { {geom::Attrib::CUSTOM_0, "vInstancePosition"}, {geom::Attrib::CUSTOM_1, "vInstanceColor"} });
 }
 
+void ToroidalApp::getPositions(gl::VboRef sourceBuffer, std::vector<vec3>& positionVector, size_t count)
+{
+	vec3* bufferMap = (vec3*)sourceBuffer->map(GL_READ_ONLY);
+	for (int i = 0; i < count; i++)
+	{
+		positionVector.push_back(vec3(bufferMap[i] * RES_RADII.y));
+	}
+	sourceBuffer->unmap();
+}
+
 void ToroidalApp::setupColors(std::vector<vec3> &colorVector, size_t count)
 {
 	colorVector.clear();
 	for (size_t i = 0; i < count; i++)
 	{
-		if (i >= 0 && i <= 11)
-			colorVector.push_back(vec3(1.0f));
+		if (i % 2 == 0)
+			colorVector.push_back(vec3(1.f, 0.5f, 0.f));
 		else
-		{
-			if (i % 2 == 0 && i > 11)
-				colorVector.push_back(vec3(1.f, 0.f, 0.f));
-			else
-				colorVector.push_back(vec3(0.f, 1.f, 0.f));
-		}
+			colorVector.push_back(vec3(0.f, .5f, 1.f));
 	}
 }
 

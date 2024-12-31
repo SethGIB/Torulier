@@ -15,12 +15,6 @@
     <Filter Include="Source Files\shaders">
       <UniqueIdentifier>{ec65fa7c-b7d2-4303-9bdb-3c8956206bd9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\blocks">
-      <UniqueIdentifier>{b19af211-6e49-4ab6-8693-f95bef108e62}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\blocks\OSC">
-      <UniqueIdentifier>{11475ac8-b483-4ce8-98d9-53827efd3ec5}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\ToroidalApp.cpp">
@@ -32,9 +26,6 @@
     <ClInclude Include="..\include\Resources.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClCompile Include="..\blocks\OSC\src\cinder\osc\Osc.cpp">
-      <Filter>Source Files\blocks\OSC</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\Resources.h">
@@ -42,9 +33,6 @@
     </ClInclude>
     <ClInclude Include="..\include\ToroidalApp.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\blocks\OSC\src\cinder\osc\Osc.h">
-      <Filter>Source Files\blocks\OSC</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
